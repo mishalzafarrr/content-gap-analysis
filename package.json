@@ -4,6 +4,6 @@
   "description": "AI-powered Content Gap Analysis tool by Social Mishal",
   "private": true,
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   }
 }
