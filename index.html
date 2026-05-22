@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content Gap Analysis — Social Mishal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #2D6A4F;
+      --green-mid: #40916C;
+      --green-light: #74C69D;
+      --yellow: #F4C542;
+      --yellow-light: #FFEEA3;
+      --cream: #FAFAF7;
+      --dark: #1A1A1A;
+      --gray: #6B6B6B;
+      --gray-light: #F0F0EC;
+      --border: #E0E0D8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+
+    nav {
+      padding: 20px 40px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); background: var(--cream);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); }
+    .nav-tag { font-size: 11px; font-weight: 500; color: var(--gray); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* LANDING */
+    .landing { max-width: 720px; margin: 0 auto; padding: 80px 24px 0; }
+    .hero-badge {
+      display: inline-block; background: var(--yellow-light); border: 1px solid var(--yellow);
+      color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 6px 16px; border-radius: 100px; margin-bottom: 28px;
+    }
+    .hero h1 { font-size: clamp(32px, 6vw, 50px); font-weight: 900; line-height: 1.12; color: var(--dark); margin-bottom: 20px; letter-spacing: -0.02em; }
+    .hero h1 em { color: var(--green); font-style: normal; }
+    .hero h1 .ul { position: relative; display: inline-block; }
+    .hero h1 .ul::after { content: ''; position: absolute; bottom: 4px; left: 0; width: 100%; height: 3px; background: var(--yellow); border-radius: 2px; }
+    .hero p { font-size: 16px; line-height: 1.75; color: var(--gray); margin-bottom: 40px; max-width: 520px; }
+
+    .what-you-get { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 32px; }
+    .wg-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 20px; }
+    .wg-item { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 18px; }
+    .wg-item:last-child { margin-bottom: 0; }
+    .wg-dot { width: 26px; height: 26px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .wg-dot span { color: #fff; font-size: 11px; font-weight: 800; }
+    .wg-text strong { display: block; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .wg-text p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+    .hiw { margin-bottom: 32px; }
+    .hiw-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray); margin-bottom: 16px; }
+    .hiw-steps { display: flex; }
+    .hiw-step { flex: 1; text-align: center; position: relative; }
+    .hiw-step:not(:last-child)::after { content: ''; position: absolute; top: 18px; right: 0; width: 50%; height: 1.5px; background: var(--border); z-index: 0; }
+    .hiw-step:not(:first-child)::before { content: ''; position: absolute; top: 18px; left: 0; width: 50%; height: 1.5px; background: var(--border); z-index: 0; }
+    .hiw-num { width: 36px; height: 36px; background: #fff; border: 2px solid var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; position: relative; z-index: 1; }
+    .hiw-num span { font-size: 13px; font-weight: 800; color: var(--green); }
+    .hiw-step p { font-size: 12px; font-weight: 600; color: var(--dark); line-height: 1.4; padding: 0 8px; }
+    .hiw-step small { font-size: 11px; color: var(--gray); }
+
+    .trust-bar { background: var(--green); border-radius: 14px; padding: 24px 28px; margin-bottom: 32px; display: flex; align-items: flex-start; gap: 18px; }
+    .trust-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+    .trust-text strong { display: block; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .trust-text p { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.65; }
+
+    .start-btn {
+      width: 100%; padding: 18px; background: var(--yellow); color: var(--dark);
+      font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 800;
+      border: none; border-radius: 12px; cursor: pointer; margin-bottom: 12px;
+      transition: background 0.2s; letter-spacing: 0.02em;
+    }
+    .start-btn:hover { background: #e6b830; }
+    .start-note { text-align: center; font-size: 12px; color: var(--gray); padding-bottom: 60px; }
+
+    /* FORM */
+    #form-section { display: none; max-width: 680px; margin: 0 auto; padding: 40px 24px 80px; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--green); cursor: pointer; margin-bottom: 24px; background: none; border: none; font-family: inherit; }
+    .form-card { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 40px; box-shadow: 0 4px 40px rgba(0,0,0,0.05); }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 7px; }
+    label span { font-weight: 400; color: var(--gray); font-size: 12px; }
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: 'Montserrat', sans-serif; font-size: 13px; color: var(--dark);
+      background: var(--cream); transition: border-color 0.2s; outline: none; appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--green-mid); background: #fff; }
+    textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B6B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer;
+    }
+    .checkbox-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .cb-item {
+      display: flex; align-items: center; justify-content: center; padding: 10px 8px;
+      border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer;
+      background: var(--cream); font-size: 12px; font-weight: 500; color: var(--dark);
+      transition: all 0.15s; text-align: center;
+    }
+    .cb-item:hover { border-color: var(--green-light); }
+    .cb-item.on { border-color: var(--green-mid); background: #f0faf5; color: var(--green); font-weight: 700; }
+    .divider { height: 1px; background: var(--border); margin: 24px 0; }
+    .submit-btn {
+      width: 100%; padding: 16px; background: var(--green); color: #fff;
+      font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700;
+      border: none; border-radius: 12px; cursor: pointer; margin-top: 4px; transition: background 0.2s;
+    }
+    .submit-btn:hover { background: var(--green-mid); }
+    .submit-btn:disabled { background: var(--gray); cursor: not-allowed; }
+    .form-note { text-align: center; font-size: 11px; color: var(--gray); margin-top: 12px; }
+    .error-msg { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; padding: 12px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-top: 12px; display: none; }
+
+    /* LOADING */
+    #loading { display: none; text-align: center; padding: 100px 24px; }
+    .loader-ring { width: 52px; height: 52px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 24px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 16px; font-weight: 600; color: var(--dark); margin-bottom: 8px; }
+    .loading-sub { font-size: 13px; color: var(--gray); }
+
+    /* REPORT */
+    #report { display: none; max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+    .report-header { background: var(--green); color: #fff; border-radius: 20px 20px 0 0; padding: 36px 40px; }
+    .report-header .rtag { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.65; margin-bottom: 8px; }
+    .report-header h2 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+    .report-header p { font-size: 13px; opacity: 0.78; }
+    .report-body { background: #fff; border: 1px solid var(--border); border-top: none; border-radius: 0 0 20px 20px; padding: 36px 40px; box-shadow: 0 4px 40px rgba(0,0,0,0.05); }
+    .report-content { font-size: 14px; line-height: 1.8; color: var(--dark); }
+    .report-content h3 { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin: 28px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .report-content h3:first-child { margin-top: 0; }
+    .report-content p { margin-bottom: 12px; color: #3a3a3a; }
+    .report-content ul { padding-left: 0; list-style: none; margin-bottom: 12px; }
+    .report-content ul li { padding: 9px 12px 9px 30px; position: relative; margin-bottom: 7px; background: var(--gray-light); border-radius: 7px; font-size: 13.5px; line-height: 1.6; }
+    .report-content ul li::before { content: '→'; position: absolute; left: 11px; color: var(--green-mid); font-weight: 700; top: 10px; }
+    .report-content strong { color: var(--green); font-weight: 700; }
+
+    /* DELIVERY */
+    .delivery-section { margin-top: 28px; background: var(--gray-light); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+    .delivery-title { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .delivery-sub { font-size: 13px; color: var(--gray); margin-bottom: 18px; line-height: 1.5; }
+    .delivery-options { display: flex; gap: 10px; margin-bottom: 16px; }
+    .delivery-opt {
+      flex: 1; padding: 12px 10px; border: 1.5px solid var(--border); border-radius: 10px;
+      text-align: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--gray);
+      background: #fff; transition: all 0.15s;
+    }
+    .delivery-opt.selected { border-color: var(--green); color: var(--green); background: #f0faf5; }
+    .delivery-opt .opt-icon { font-size: 20px; display: block; margin-bottom: 5px; }
+    .delivery-input { display: none; }
+    .delivery-input.visible { display: block; }
+    .delivery-input input { margin-bottom: 10px; }
+    .send-btn { width: 100%; padding: 13px; background: var(--green); color: #fff; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; transition: background 0.2s; }
+    .send-btn:hover { background: var(--green-mid); }
+    .sent-msg { display: none; text-align: center; padding: 12px; font-size: 13px; font-weight: 600; color: var(--green); }
+
+    /* CTA */
+    .report-cta { margin-top: 24px; background: var(--green); border-radius: 16px; padding: 32px; text-align: center; }
+    .report-cta h3 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .report-cta p { font-size: 13px; color: rgba(255,255,255,0.78); margin-bottom: 20px; line-height: 1.65; }
+    .cta-btn {
+      display: inline-block; background: var(--yellow); color: var(--dark);
+      font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 800;
+      padding: 14px 32px; border-radius: 10px; text-decoration: none; transition: background 0.2s;
+    }
+    .cta-btn:hover { background: #e6b830; }
+    .report-foot { text-align: center; margin-top: 20px; font-size: 12px; color: var(--gray); }
+    .report-foot a { color: var(--green); text-decoration: none; font-weight: 600; }
+
+    footer { border-top: 1px solid var(--border); padding: 24px 40px; text-align: center; font-size: 12px; color: var(--gray); }
+    footer a { color: var(--green); text-decoration: none; font-weight: 600; }
+
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      .landing { padding: 48px 20px 0; }
+      .form-card { padding: 28px 20px; }
+      .report-header { padding: 28px 24px; }
+      .report-body { padding: 28px 24px; }
+      .checkbox-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">Social Mishal</span>
+  <span class="nav-tag">Free Tool</span>
+</nav>
+
+<!-- LANDING -->
+<div id="landing-section">
+  <div class="landing">
+    <div class="hero-badge">Free · AI-Powered · Results in 60 Seconds</div>
+    <div class="hero">
+      <h1>You're posting every day.<br>So why aren't people<br><em><span class="ul">actually buying?</span></em></h1>
+      <p>Honestly, it's probably not your content quality. It's what you're not posting. Fill in 8 quick questions and I'll show you exactly what's missing from your strategy and what to create instead.</p>
+    </div>
+
+    <div class="what-you-get">
+      <div class="wg-title">Here's what you'll find out</div>
+      <div class="wg-item">
+        <div class="wg-dot"><span>1</span></div>
+        <div class="wg-text">
+          <strong>Which content you're over-posting and what to cut back on</strong>
+          <p>Most people are stuck in one content type without realising it. We'll find yours.</p>
+        </div>
+      </div>
+      <div class="wg-item">
+        <div class="wg-dot"><span>2</span></div>
+        <div class="wg-text">
+          <strong>The part of the buyer journey you're skipping</strong>
+          <p>This is usually why people follow but never reach out. It's a fixable problem.</p>
+        </div>
+      </div>
+      <div class="wg-item">
+        <div class="wg-dot"><span>3</span></div>
+        <div class="wg-text">
+          <strong>5 content ideas you can actually post this week</strong>
+          <p>Specific to your niche, platform, and audience. Not recycled advice you've seen everywhere.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="hiw">
+      <div class="hiw-title">How it works</div>
+      <div class="hiw-steps">
+        <div class="hiw-step">
+          <div class="hiw-num"><span>1</span></div>
+          <p>Fill the form</p>
+          <small>8 quick questions</small>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num"><span>2</span></div>
+          <p>AI reviews your strategy</p>
+          <small>About 60 seconds</small>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num"><span>3</span></div>
+          <p>Get your report</p>
+          <small>On screen and by email</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="trust-bar">
+      <div class="trust-icon">🌱</div>
+      <div class="trust-text">
+        <strong>A quick note from me</strong>
+        <p>I'm Mishal. I built this because I kept seeing great businesses post consistently and still get no leads. One of my clients hit 2.4M views in 30 days with zero ad spend after we fixed exactly this. That's what this audit is built on.</p>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="showForm()">Show Me My Content Gaps →</button>
+    <p class="start-note">Takes 3 minutes. Free. No spam ever.</p>
+  </div>
+</div>
+
+<!-- FORM -->
+<div id="form-section">
+  <button class="back-link" onclick="showLanding()">← Back</button>
+  <div class="form-card">
+    <div class="section-label">First, tell me about you</div>
+    <div class="form-group">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" placeholder="e.g. Sarah" required />
+    </div>
+    <div class="form-group">
+      <label for="email">Your Email <span>— I'll send your report here too</span></label>
+      <input type="email" id="email" placeholder="you@email.com" required />
+    </div>
+    <div class="form-group">
+      <label for="niche">What's your niche or industry?</label>
+      <input type="text" id="niche" placeholder="e.g. life coaching, beauty, fitness, real estate..." required />
+    </div>
+    <div class="form-group">
+      <label for="audience">Who are you trying to reach?</label>
+      <input type="text" id="audience" placeholder="e.g. women in their 30s who want to start a business" required />
+    </div>
+    <div class="divider"></div>
+    <div class="section-label">Now tell me about your content</div>
+    <div class="form-group">
+      <label>Where are you posting?</label>
+      <div class="checkbox-row" id="platforms">
+        <div class="cb-item" onclick="toggleCb(this)">Instagram</div>
+        <div class="cb-item" onclick="toggleCb(this)">LinkedIn</div>
+        <div class="cb-item" onclick="toggleCb(this)">TikTok</div>
+        <div class="cb-item" onclick="toggleCb(this)">Facebook</div>
+        <div class="cb-item" onclick="toggleCb(this)">YouTube</div>
+        <div class="cb-item" onclick="toggleCb(this)">Pinterest</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="content-types">What kind of content do you usually post? <span>Be honest, it helps!</span></label>
+      <textarea id="content-types" placeholder="e.g. mostly tips and quotes, some behind the scenes, the occasional promo post..."></textarea>
+    </div>
+    <div class="form-group">
+      <label for="goal">What's your biggest goal right now?</label>
+      <select id="goal">
+        <option value="">Select your goal...</option>
+        <option value="get more leads and clients">Get more leads and clients</option>
+        <option value="grow my following and reach">Grow my following and reach</option>
+        <option value="build brand awareness">Build brand awareness</option>
+        <option value="establish authority in my niche">Establish authority in my niche</option>
+        <option value="sell a specific product or service">Sell a specific product or service</option>
+        <option value="build a community">Build a community</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="struggle">What feels like it's just not working? <span>The more honest you are the better your report</span></label>
+      <textarea id="struggle" placeholder="e.g. I get likes but nobody reaches out, my reels get views but no new followers..."></textarea>
+    </div>
+    <div class="divider"></div>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">Analyse My Content Gaps →</button>
+    <div class="error-msg" id="error-msg"></div>
+    <p class="form-note">Takes about 60 seconds. Results show up instantly and land in your inbox too.</p>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="loader-ring"></div>
+  <p class="loading-text">Analysing your content strategy...</p>
+  <p class="loading-sub">This takes about 30 to 60 seconds. Hang tight.</p>
+</div>
+
+<!-- REPORT -->
+<div id="report">
+  <div class="report-header">
+    <div class="rtag">Your Personalised Report</div>
+    <h2 id="report-name">Content Gap Report</h2>
+    <p id="report-subtitle">Your personalised content strategy analysis</p>
+  </div>
+  <div class="report-body">
+    <div class="report-content" id="report-content"></div>
+
+    <div class="delivery-section">
+      <div class="delivery-title">Want to save this report?</div>
+      <div class="delivery-sub">Send it to yourself so you can come back to it anytime.</div>
+      <div class="delivery-options">
+        <div class="delivery-opt selected" id="opt-email" onclick="selectDelivery('email')">
+          <span class="opt-icon">📧</span>Send by email
+        </div>
+        <div class="delivery-opt" id="opt-whatsapp" onclick="selectDelivery('whatsapp')">
+          <span class="opt-icon">💬</span>Send to WhatsApp
+        </div>
+      </div>
+      <div class="delivery-input visible" id="input-email">
+        <input type="email" id="delivery-email" placeholder="your@email.com" />
+        <button class="send-btn" onclick="sendReport('email')">Send My Report →</button>
+      </div>
+      <div class="delivery-input" id="input-whatsapp">
+        <input type="tel" id="delivery-wa" placeholder="+92 300 1234567" />
+        <button class="send-btn" onclick="sendReport('whatsapp')">Send to WhatsApp →</button>
+      </div>
+      <div class="sent-msg" id="sent-msg">Report sent! Go check your inbox (or WhatsApp). You're all set.</div>
+    </div>
+
+    <div class="report-cta">
+      <h3>Want help actually implementing this?</h3>
+      <p>Book a free 30 minute call and we'll map out your full content strategy together. No pitch, just strategy.</p>
+      <a href="https://calendly.com/mishalzafar0/discovery-call" target="_blank" class="cta-btn">Book Your Free Call →</a>
+    </div>
+    <p class="report-foot">Made with care by <a href="https://mishalzafarrr.github.io/socialmishal" target="_blank">Social Mishal</a></p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Social Mishal · <a href="https://mishalzafarrr.github.io/socialmishal" target="_blank">Portfolio</a></p>
+</footer>
+
+<script>
+  function showForm() {
+    document.getElementById('landing-section').style.display = 'none';
+    document.getElementById('form-section').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function showLanding() {
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('landing-section').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function toggleCb(el) { el.classList.toggle('on'); }
+  function getSelectedPlatforms() {
+    return Array.from(document.querySelectorAll('#platforms .cb-item.on')).map(el => el.textContent.trim());
+  }
+  function parseReport(text) {
+    const lines = text.split('\n');
+    let html = '';
+    let inList = false;
+    for (let line of lines) {
+      line = line.trim();
+      if (!line) continue;
+      if (/^#{1,3} /.test(line)) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h3>${line.replace(/^#+\s/, '')}</h3>`;
+      } else if (/^[-•] /.test(line)) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        html += `<li>${line.replace(/^[-•]\s/, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</li>`;
+      } else {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<p>${line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`;
+      }
+    }
+    if (inList) html += '</ul>';
+    return html;
+  }
+  async function submitForm() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const niche = document.getElementById('niche').value.trim();
+    const audience = document.getElementById('audience').value.trim();
+    const platforms = getSelectedPlatforms();
+    const contentTypes = document.getElementById('content-types').value.trim();
+    const goal = document.getElementById('goal').value;
+    const struggle = document.getElementById('struggle').value.trim();
+    const errorEl = document.getElementById('error-msg');
+    errorEl.style.display = 'none';
+    if (!name || !email || !niche || !audience || !goal) {
+      errorEl.textContent = 'Please fill in all required fields.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    if (platforms.length === 0) {
+      errorEl.textContent = 'Please select at least one platform.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+      const res = await fetch('/api/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, niche, audience, platforms, contentTypes, goal, struggle })
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || 'Failed');
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('report-name').textContent = `${name}'s Content Gap Report`;
+      document.getElementById('report-subtitle').textContent = `Personalised for ${niche} on ${platforms.join(', ')}`;
+      document.getElementById('report-content').innerHTML = parseReport(data.report);
+      document.getElementById('delivery-email').value = email;
+      document.getElementById('report').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('form-section').style.display = 'block';
+      errorEl.textContent = 'Something went wrong generating your report. Please try again.';
+      errorEl.style.display = 'block';
+    }
+  }
+  function selectDelivery(type) {
+    document.getElementById('opt-email').classList.toggle('selected', type === 'email');
+    document.getElementById('opt-whatsapp').classList.toggle('selected', type === 'whatsapp');
+    document.getElementById('input-email').classList.toggle('visible', type === 'email');
+    document.getElementById('input-whatsapp').classList.toggle('visible', type === 'whatsapp');
+    document.getElementById('sent-msg').style.display = 'none';
+  }
+  async function sendReport(type) {
+    const val = type === 'email'
+      ? document.getElementById('delivery-email').value
+      : document.getElementById('delivery-wa').value;
+    if (!val) return;
+    document.getElementById('input-email').classList.remove('visible');
+    document.getElementById('input-whatsapp').classList.remove('visible');
+    document.getElementById('sent-msg').style.display = 'block';
+  }
+</script>
+</body>
+</html>

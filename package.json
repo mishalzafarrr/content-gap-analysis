@@ -1,0 +1,9 @@
+{
+  "name": "content-gap-analysis",
+  "version": "1.0.0",
+  "description": "AI-powered Content Gap Analysis tool by Social Mishal",
+  "private": true,
+  "engines": {
+    "node": "18.x"
+  }
+}
