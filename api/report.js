@@ -1,4 +1,9 @@
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { name, email, niche, audience, platforms, contentTypes, goal, struggle } = req.body;
@@ -7,9 +12,9 @@ export default async function handler(req, res) {
   }
 
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-  if (!GEMINI_API_KEY) return res.status(500).json({ error: 'API key not configured' });
+  if (!GEMINI_API_KEY) return res.status(500).json({ error: 'Gemini API key not configured' });
 
-  const platformList = platforms.join(', ');
+  const platformList = Array.isArray(platforms) ? platforms.join(', ') : platforms;
 
   const prompt = `You are a senior social media strategist with 10+ years of experience helping service-based businesses get real results from organic content. You are direct, specific, and you never give generic advice.
 
@@ -48,11 +53,7 @@ One paragraph explaining which stage (awareness, consideration, or decision) the
 One paragraph identifying the single highest-impact content type or series they should start immediately. Explain specifically why it works for their niche, their audience, and their platform. Make it feel obvious by the end.
 
 ### 5 content ideas that will actually work for you
-Five bullet points. Each idea must include:
-- The specific hook or title to use
-- The format (reel, carousel, talking head video, story series, etc.)
-- Why it will work for this specific person's niche and audience
-Make these so specific that ${name} could start creating them tomorrow.
+Five bullet points. Each idea must include the specific hook or title to use, the format (reel, carousel, talking head video, story series, etc.), and why it will work for this specific person's niche and audience. Make these so specific that ${name} could start creating them tomorrow.
 
 ### Your next step
 Two to three sentences. Tell them exactly what to do first. Be direct. Make them feel ready to act.`;
@@ -71,18 +72,26 @@ Two to three sentences. Tell them exactly what to do first. Be direct. Make them
     );
 
     const geminiData = await geminiRes.json();
-    if (!geminiRes.ok) return res.status(500).json({ error: 'AI generation failed' });
+
+    if (!geminiRes.ok) {
+      console.error('Gemini error:', JSON.stringify(geminiData));
+      return res.status(500).json({ error: 'AI generation failed', details: geminiData });
+    }
 
     const report = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!report) return res.status(500).json({ error: 'Empty response from AI' });
 
-    try { await sendEmail(email, name, niche, platformList, report); } catch (e) { console.error('Email failed:', e); }
+    try {
+      await sendEmail(email, name, niche, platformList, report);
+    } catch (e) {
+      console.error('Email failed:', e);
+    }
 
     return res.status(200).json({ report });
 
   } catch (err) {
-    console.error('Error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Handler error:', err);
+    return res.status(500).json({ error: 'Internal server error', message: err.message });
   }
 }
 
@@ -91,10 +100,9 @@ async function sendEmail(email, name, niche, platforms, report) {
   if (!BREVO_API_KEY) return;
 
   const reportHtml = report
-    .replace(/### (.+)/g, '<h3 style="color:#2D6A4F;font-family:sans-serif;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;margin:24px 0 8px;padding-bottom:8px;border-bottom:1px solid #E0E0D8;">$1</h3>')
+    .replace(/### (.+)/g, '<h3 style="color:#2D6A4F;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;margin:24px 0 8px;padding-bottom:8px;border-bottom:1px solid #E0E0D8;">$1</h3>')
     .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#2D6A4F;">$1</strong>')
-    .replace(/^- (.+)$/gm, '<li style="margin-bottom:8px;padding:8px 12px 8px 28px;background:#F0F0EC;border-radius:6px;position:relative;font-size:13px;line-height:1.6;">$1</li>')
-    .replace(/(<li.*<\/li>\n?)+/gs, m => `<ul style="list-style:none;padding:0;margin-bottom:12px;">${m}</ul>`)
+    .replace(/^- (.+)$/gm, '<li style="margin-bottom:8px;padding:8px 12px 8px 28px;background:#F0F0EC;border-radius:6px;font-size:13px;line-height:1.6;">$1</li>')
     .replace(/\n\n/g, '</p><p style="margin:10px 0;font-size:14px;line-height:1.75;color:#3a3a3a;">');
 
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
@@ -106,9 +114,7 @@ async function sendEmail(email, name, niche, platforms, report) {
   </div>
   <div style="background:#fff;padding:40px;border:1px solid #E0E0D8;border-top:none;border-radius:0 0 12px 12px;">
     <p style="color:#6B6B6B;font-size:14px;line-height:1.7;margin:0 0 28px;">Hi ${name}, here's your personalised Content Gap Analysis. Read through carefully. Your biggest opportunities are waiting.</p>
-    <div style="font-size:14px;line-height:1.8;color:#1A1A1A;">
-      <p style="margin:10px 0;font-size:14px;line-height:1.75;color:#3a3a3a;">${reportHtml}</p>
-    </div>
+    <div style="font-size:14px;line-height:1.8;color:#1A1A1A;">${reportHtml}</div>
     <div style="margin-top:36px;background:#2D6A4F;border-radius:14px;padding:28px;text-align:center;">
       <h3 style="font-size:18px;font-weight:800;color:#fff;margin:0 0 8px;">Want help actually implementing this?</h3>
       <p style="font-size:13px;color:rgba(255,255,255,0.78);margin:0 0 20px;line-height:1.6;">Book a free 30 minute call and we'll map out your full content strategy together. No pitch, just strategy.</p>
