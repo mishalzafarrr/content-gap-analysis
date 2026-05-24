@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "AI-powered Content Gap Analysis tool by Social Mishal",
   "private": true,
+  "type": "module",
   "engines": {
     "node": "20.x"
   }
